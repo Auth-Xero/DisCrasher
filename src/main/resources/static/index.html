@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DisCrasher</title>
+    <style>
+        * {
+            margin: 0;
+            font-family: Franklin Gothic;
+        }
+
+        :root {
+            --grn: #427568;
+            --blp: #7289DA;
+            --drk: #23272A;
+            --blk: #000;
+            --ltg: #2E8B57;
+            --wht: #FFF;
+        }
+
+        html, body {
+            font-size: 3vh;
+            background-color: var(--drk);
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        .main {
+            min-height: 12rem;
+            width: 30rem;
+            border-radius: 1rem;
+            box-shadow: 0.5rem 0.5rem 2rem var(--blk);
+            color: var(--wht);
+            background-color: var(--blp);
+
+        }
+
+        h1 {
+            margin: 0.5rem;
+        }
+
+        hr {
+            border: 0.2rem solid var(--blk);
+        }
+
+        label {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 4rem;
+            transition-duration: 125ms;
+            background-color: var(--drk);
+            margin: 0.5rem 0;
+        }
+
+        .uploaded {
+            color: var(--wht);
+            background-color: var(--ltg);
+        }
+
+        label:hover {
+            color: var(--drk);
+            background-color: var(--wht);
+        }
+
+        input {
+            display: none;
+        }
+
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="center">
+    <div class="main">
+        <h1>DisCrasher</h1>
+        <hr>
+        <label for="file" id="fileLabel">Upload</label>
+        <input type="file" accept=".mp4" name="file" id="file" required>
+        <br>
+        <label for="upload" id="uploadLabel">Submit</label>
+        <input type="submit" id="upload">
+    </div>
+</div>
+<script>
+       var isFinished = true;
+$(document).ready(() => {
+    $("#file").change(() => {
+        $("#fileLabel").addClass("uploaded")
+    });
+
+    $('#upload').on("click", () => {
+
+        if ($("#file")[0].files[0] !== undefined) {
+            if (isFinished) {
+                isFinished = false;
+                let data = new FormData();
+                data.append("file", $("#file")[0].files[0]);
+                $.ajax({
+                    url: '/process',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    data: data,
+                    enctype: "multipart/form-data",
+                    success: res => { window.location = `/files/${res}`; },
+                    error: (xhr, textStatus, errorThrown) => {
+                        alert('Please only upload .mp4 files!');
+                    }
+                });
+            }
+            else {
+                alert('Please wait until the previous file has finished processing!');
+            }
+        }
+        else {
+            alert("Please select a file first!");
+        }
+    });
+});
+
+</script>
+</body>
+</html>
