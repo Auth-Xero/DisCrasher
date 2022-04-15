@@ -101,6 +101,28 @@ public class DiscrashController {
                 return ResponseEntity.badRequest().body("Please only upload mp4 files!");
             }
         } catch (Exception exception) {
+            return ResponseEntity.badRequest().body("An unknown error occurred!");
+        }
+
+    }
+
+    @PostMapping("/process-endless")
+    @ResponseBody
+    public ResponseEntity<String> handleEndlessUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        try {
+            if(RateLimitHelper.isBeingRateLimited(request.getRemoteAddr())) return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("You cannot brew coffee in a teapot, you have to wait!");
+            if (file.getOriginalFilename().endsWith(".mp4")) {
+                if (UtilHelper.verifyFileHeader(file, MP4_HEADERS)) {
+                    String fileName = storageService.putFile(file, true);
+                    String outputFile = this.ffmpegHelper.generateCrashVideo(fileName);
+                    return ResponseEntity.ok().body(outputFile);
+                } else {
+                    return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+            }
+        } catch (Exception exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
 
