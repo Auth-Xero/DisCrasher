@@ -114,9 +114,13 @@ $(document).ready(() => {
                     type: 'POST',
                     data: data,
                     enctype: "multipart/form-data",
-                    success: res => { window.location = `/files/${res}`; },
+                    success: res => {
+                    isFinished = true;
+                    window.location = `/files/${res}`; },
                     error: (xhr, textStatus, errorThrown) => {
-                        alert('Please only upload .mp4 files!');
+                        isFinished = true;
+                        if(xhr.status == 418) alert(xhr.responseText);
+                        else alert('Please only upload .mp4 files!');
                     }
                 });
             }

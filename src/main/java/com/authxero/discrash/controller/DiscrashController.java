@@ -2,17 +2,20 @@ package com.authxero.discrash.controller;
 
 import com.authxero.discrash.executor.CommandExecutorService;
 import com.authxero.discrash.helpers.FFMPEGHelper;
+import com.authxero.discrash.helpers.RateLimitHelper;
 import com.authxero.discrash.helpers.UtilHelper;
 import com.authxero.discrash.storage.StorageFileNotFoundException;
 import com.authxero.discrash.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -83,8 +86,9 @@ public class DiscrashController {
 
     @PostMapping("/process")
     @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
+            if(RateLimitHelper.isBeingRateLimited(request.getRemoteAddr())) return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("You cannot brew coffee in a teapot, you have to wait!");
             if (file.getOriginalFilename().endsWith(".mp4")) {
                 if (UtilHelper.verifyFileHeader(file, MP4_HEADERS)) {
                     String fileName = storageService.putFile(file, true);
