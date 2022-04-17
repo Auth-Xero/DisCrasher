@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
+    <style>
+			@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+			:root {
+				--discord: #5865F2;
+				--grn: #427568;
+            --blp: #7289DA;
+            --drk: #23272A;
+            --blk: #000;
+            --ltg: #2E8B57;
+            --wht: #FFF;
+			}
+			* {
+				box-sizing: border-box;
+				font-family: montserrat;
+			}
+			body {
+				font-family: montserrat;
+				padding: 2em;
+				background: var(--discord);
+				color: white;
+			}
+			#center {
+				height: calc(100vh - 4em);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+			}
+			h1 {
+				font-weight: bold;
+				font-size: 4em;
+				text-align: center;
+				margin-bottom: 10px;
+			}
+			h2 {
+				font-style: italic;
+				text-align: center;
+				font-size: 1.5em;
+				line-height: 1.25;
+			}
+			#container {
+				display: flex;
+				justify-content: center;
+				width: 100%;
+			}
+			#formbox {
+				background: white;
+				width: 500px;
+				padding: 1em;
+				margin: 2em;
+				display: inline-block;
+				border-radius: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				color: black;
+				font-size: 1em;
+			}
+			#submit {
+				outline: 0;
+				background: none;
+				border: 0;
+				background: green;
+				color: white;
+				border-radius: 5px;
+				padding: 1em;
+				font-size: 1em;
+				cursor: pointer;
+				transition: all 0.25s;
+			}
+
+			#submit:hover {
+				background: #00ad00;
+			}
+
+			#options {
+				display: flex;
+				border: 1px solid var(--discord);
+				border-radius: 5px;
+				overflow: hidden;
+			}
+
+			.option {
+				padding: 1em;
+				cursor: pointer;
+				transition: all 0.25s;
+			}
+
+			.selected {
+				background: var(--discord);
+				color: white;
+			}
+
+			#fileLabel {
+			background-color: var(--drk);
+            display: flex;
+			border: 1px solid var(--discord);
+			border-radius: 5px;
+			overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1em 2em;
+			cursor: pointer;
+			transition: all 0.25s;
+            color: var(--wht);
+            }
+
+		.uploaded {
+		    color: var(--drk) !important;
+            background-color: var(--wht) !important;
+        }
+
+        #fileLabel:hover {
+            color: var(--drk);
+            background-color: var(--wht);
+        }
+#lbl1 {
+            background-color: var(--drk);
+            display: flex;
+			border: 1px solid var(--discord);
+			border-radius: 5px;
+			overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1em 2em;
+			cursor: pointer;
+			transition: all 0.25s;
+            color: var(--wht);
+        }
+
+        #lbl1:hover {
+            color: var(--drk);
+            background-color: var(--wht);
+        }
+        .footer {
+        display: flex;
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:60px;   /* Height of the footer */
+   background:#B2BEB5;
+   justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div id="center">
+    <h1>DisCrasher</h1>
+    <h2>Generate endless videos or negative videos for discord!</h2>
+    <div id="container">
+        <div id="formbox">
+            <div id="options">
+                <div class="option selected" id="op1">Endless</div>
+                <div class="option" id="op2">Negative</div>
+            </div>
+            <label for="file" id="fileLabel">Upload</label>
+            <input type="file" accept=".mp4" name="file" id="file" hidden required>
+            <button id="submit">Submit!</button>
+        </div>
+    </div>
+    <div class="footer">
+        <label id="lbl1" for="btn1" >Donate</label>
+        <button hidden id="btn1" onclick="window.location = 'https://paypal.me/AuthXero?country.x=US&locale.x=en_US'"></button>
+    </div>
+</div>
+<script>
+      var isFinished = true;
+$(document).ready(() => {
+    $("#file").on('change', function () {
+        if ($("#file")[0].files.length !== 0) {
+            $("#fileLabel").addClass("uploaded")
+        }
+        else {
+            $("#fileLabel").removeClass("uploaded")
+        }
+    });
+    var selected = false
+    $(".option").click(function () {
+        $(this).attr("id") == "op1" ? selected = true : selected = false;
+        $(this).addClass("selected")
+        $(this).siblings(".option").removeClass("selected")
+    })
+    $("#submit").click(function () {
+        if ($("#file")[0].files[0] !== undefined) {
+            if (isFinished) {
+                alert("your video is being processed, please wait...");
+                isFinished = false;
+                let data = new FormData();
+                data.append("file", $("#file")[0].files[0]);
+                $.ajax({
+                    url: '/process-endless?endless=' + selected,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    data: data,
+                    enctype: "multipart/form-data",
+                    success: res => {
+                        isFinished = true;
+                        window.location = `/files/${res}`;
+                    },
+                    error: (xhr, textStatus, errorThrown) => {
+                        isFinished = true;
+                        if (xhr.status == 418) alert(xhr.responseText);
+                        else if (xhr.status == 400) alert("Please only upload .mp4 files!");
+                        else alert('An unknown error occurred! Please only upload files less than 8mb!');
+                    }
+                });
+            }
+            else {
+                alert('Please wait until the previous file has finished processing!');
+            }
+        }
+        else {
+            alert("Please select a file first!");
+        }
+    })
+})
+
+</script>
+</body>
+</html>

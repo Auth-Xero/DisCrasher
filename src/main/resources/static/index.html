@@ -149,7 +149,6 @@ $(document).ready(() => {
                     isFinished = true;
                     window.location = `/files/${res}`; },
                     error: (xhr, textStatus, errorThrown) => {
-                        console.log(xhr);
                         isFinished = true;
                         if(xhr.status == 418) alert(xhr.responseText);
                         else if(xhr.status == 400) alert("Please only upload .mp4 files!");

@@ -1,6 +1,7 @@
 package com.authxero.discrash.controller;
 
 import com.authxero.discrash.executor.CommandExecutorService;
+import com.authxero.discrash.helpers.EndlessVideoHelper;
 import com.authxero.discrash.helpers.FFMPEGHelper;
 import com.authxero.discrash.helpers.RateLimitHelper;
 import com.authxero.discrash.helpers.UtilHelper;
@@ -26,6 +27,7 @@ public class DiscrashController {
 
     private final StorageService storageService;
     private FFMPEGHelper ffmpegHelper;
+    private EndlessVideoHelper endlessVideoHelper;
     public static int[][] MP4_HEADERS = new int[][]{
             {0x66, 0x74, 0x79, 0x70},
             {0x6d, 0x64, 0x61, 0x74},
@@ -57,6 +59,7 @@ public class DiscrashController {
     public DiscrashController(StorageService storageService) {
         this.storageService = storageService;
         this.ffmpegHelper = new FFMPEGHelper();
+        this.endlessVideoHelper = new EndlessVideoHelper();
     }
 
     //DO NOT TURN ON THE 'debug' FLAG UNLESS YOU WANT FILE LISTING
@@ -111,10 +114,12 @@ public class DiscrashController {
     public ResponseEntity<String> handleEndlessUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             if(RateLimitHelper.isBeingRateLimited(request.getRemoteAddr())) return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("You cannot brew coffee in a teapot, you have to wait!");
+            if(request.getParameter("endless") == null) return ResponseEntity.badRequest().body("Please do not leave any of the parameters blank!");
             if (file.getOriginalFilename().endsWith(".mp4")) {
                 if (UtilHelper.verifyFileHeader(file, MP4_HEADERS)) {
+                    boolean isTrue = request.getParameter("endless").equals("true");
                     String fileName = storageService.putFile(file, true);
-                    String outputFile = this.ffmpegHelper.generateCrashVideo(fileName);
+                    String outputFile = this.endlessVideoHelper.generateVideo(fileName, isTrue);
                     return ResponseEntity.ok().body(outputFile);
                 } else {
                     return ResponseEntity.badRequest().body("Please only upload mp4 files!");
