@@ -26,3 +26,6 @@ Runs website on port 443 without ssl and no debug information:
 ```bash
 java -jar discrasher.jar 443 false true discrasher.p12 discrasher ThisIsAWonderfulP@ssw0rd
 ```
+<br>
+
+Check out the site here: https://www.discrasher.xyz/
