@@ -19,7 +19,7 @@
 			}
 			body {
 				font-family: montserrat;
-				padding: 2em;
+				margin: 0;
 				background: var(--discord);
 				color: white;
 			}
@@ -150,13 +150,47 @@
             text-align: center;
         }
 
+.topnav {
+    overflow: hidden;
+    background-color: var(--drk);
+}
+
+.topnav a {
+    float: left;
+    color: var(--wht);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: all 0.25s;
+}
+
+.topnav a.donate {
+    float: right;
+}
+
+.topnav a:hover {
+    background-color: var(--wht);
+    color: var(--drk);
+}
+
+.topnav a.active {
+    background-color: var(--wht);
+    color: var(--drk);
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+<div class="topnav">
+    <a href="./">DisCrasher</a>
+    <a class="active" href="./endless">DisFinity</a>
+    <a class="donate" href="https://paypal.me/AuthXero?country.x=US&locale.x=en_US">Donate</a>
+    <a class="donate" href="https://github.com/Auth-Xero">Github</a>
+</div>
 <div id="center">
-    <h1>DisCrasher</h1>
-    <h2>Generate endless videos or negative videos for discord!</h2>
+    <h1>DisFinity</h1>
+    <h2>Create negative or endless videos for Discord!</h2>
     <div id="container">
         <div id="formbox">
             <div id="options">
@@ -165,12 +199,8 @@
             </div>
             <label for="file" id="fileLabel">Upload</label>
             <input type="file" accept=".mp4" name="file" id="file" hidden required>
-            <button id="submit">Submit!</button>
+            <button id="submit">Submit</button>
         </div>
-    </div>
-    <div class="footer">
-        <label id="lbl1" for="btn1" >Donate</label>
-        <button hidden id="btn1" onclick="window.location = 'https://paypal.me/AuthXero?country.x=US&locale.x=en_US'"></button>
     </div>
 </div>
 <script>

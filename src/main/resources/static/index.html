@@ -1,136 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DisCrasher</title>
+    <link rel="stylesheet" href="https://meyerweb.com/eric/tools/css/reset/reset.css">
     <style>
-        * {
-            margin: 0;
-            font-family: Franklin Gothic;
-        }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-        :root {
-            --grn: #427568;
-            --blp: #7289DA;
-            --drk: #23272A;
-            --blk: #000;
-            --ltg: #2E8B57;
-            --wht: #FFF;
-        }
+:root {
+    --discord: #5865F2;
+    --grn: #427568;
+    --blp: #7289DA;
+    --drk: #23272A;
+    --blk: #000;
+    --ltg: #2E8B57;
+    --wht: #FFF;
+}
 
-        html, body {
-            font-size: 3vh;
-            background-color: var(--drk);
-        }
+* {
+    box-sizing: border-box;
+    font-family: montserrat;
+}
 
-        .center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 100vh;
-        }
+body {
+    font-family: montserrat;
+    margin: 0;
+    background: var(--discord);
+    color: white;
+}
 
-        .main {
-            min-height: 12rem;
-            width: 30rem;
-            border-radius: 1rem;
-            box-shadow: 0.5rem 0.5rem 2rem var(--blk);
-            color: var(--wht);
-            background-color: var(--blp);
+#center {
+    height: calc(100vh - 4em);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
-        }
+h1 {
+    font-weight: bold;
+    font-size: 4em;
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-        h1 {
-            margin: 0.5rem;
-        }
+h2 {
+    font-style: italic;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: 1.25;
+}
 
-        hr {
-            border: 0.2rem solid var(--blk);
-        }
+#container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
 
-        .footer {
-        display: flex;
-   position:absolute;
-   bottom:0;
-   width:100%;
-   height:60px;   /* Height of the footer */
-   background:#B2BEB5;
-   justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+#formbox {
+    background: white;
+    width: 500px;
+    padding: 1em;
+    margin: 2em;
+    display: inline-block;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: black;
+    font-size: 1em;
+}
 
-        label {
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 4rem;
-            transition-duration: 125ms;
-            background-color: var(--drk);
-            margin: 0.5rem 0;
-        }
+#submit {
+    outline: 0;
+    background: none;
+    border: 0;
+    background: green;
+    color: white;
+    border-radius: 5px;
+    padding: 1em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.25s;
+}
 
-        #lbl1 {
-            height: 1rem;
-            width: 3rem;
-            font-size: 2vh;
-            margin: 0.5rem 0;
-            border-radius: 1rem;
-            color: var(--wht);
-        }
+#submit:hover {
+    background: #00ad00;
+}
 
-        #lbl1:hover {
-            color: var(--drk);
-            background-color: var(--wht);
-        }
+#options {
+    display: flex;
+    border: 1px solid var(--discord);
+    border-radius: 5px;
+    overflow: hidden;
+}
 
-        .uploaded {
-            color: var(--wht);
-            background-color: var(--ltg);
-        }
+.option {
+    padding: 1em;
+    cursor: pointer;
+    transition: all 0.25s;
+}
 
-        label:hover {
-            color: var(--drk);
-            background-color: var(--wht);
-        }
+.selected {
+    background: var(--discord);
+    color: white;
+}
 
-        input {
-            display: none;
-        }
+#fileLabel {
+    background-color: var(--drk);
+    display: flex;
+    border: 1px solid var(--discord);
+    border-radius: 5px;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1em 2em;
+    cursor: pointer;
+    transition: all 0.25s;
+    color: var(--wht);
+}
 
+.uploaded {
+    color: var(--drk) !important;
+    background-color: var(--wht) !important;
+}
 
+#fileLabel:hover {
+    color: var(--drk);
+    background-color: var(--wht);
+}
 
+#lbl1 {
+    background-color: var(--drk);
+    display: flex;
+    border: 1px solid var(--discord);
+    border-radius: 5px;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1em 2em;
+    cursor: pointer;
+    transition: all 0.25s;
+    color: var(--wht);
+}
+
+#lbl1:hover {
+    color: var(--drk);
+    background-color: var(--wht);
+}
+
+.footer {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    /* Height of the footer */
+    background: #B2BEB5;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.topnav {
+    overflow: hidden;
+    background-color: var(--drk);
+}
+
+.topnav a {
+    float: left;
+    color: var(--wht);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: all 0.25s;
+}
+
+.topnav a.donate {
+    float: right;
+}
+
+.topnav a:hover {
+    background-color: var(--wht);
+    color: var(--drk);
+}
+
+.topnav a.active {
+    background-color: var(--wht);
+    color: var(--drk);
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-<div class="center">
-    <div class="main">
-        <h1>DisCrasher</h1>
-        <hr>
-        <label for="file" id="fileLabel">Upload</label>
-        <input type="file" accept=".mp4" name="file" id="file" required>
-        <br>
-        <label for="upload" id="uploadLabel">Submit</label>
-        <input type="submit" id="upload">
-    </div>
-    <div class="footer">
-        <label id="lbl1" for="btn1" >Donate</label>
-        <button hidden id="btn1" onclick="window.location = 'https://paypal.me/AuthXero?country.x=US&locale.x=en_US'"></button>
+<div class="topnav">
+    <a class="active" href="./">DisCrasher</a>
+    <a href="./endless">DisFinity</a>
+    <a class="donate" href="https://paypal.me/AuthXero?country.x=US&locale.x=en_US">Donate</a>
+    <a class="donate" href="https://github.com/Auth-Xero">Github</a>
+</div>
+<div id="center">
+    <h1>DisCrasher</h1>
+    <h2>Generate crash videos for Discord!</h2>
+    <div id="container">
+        <div id="formbox">
+            <label for="file" id="fileLabel">Upload</label>
+            <input type="file" accept=".mp4" name="file" id="file" hidden required>
+            <button id="submit">Submit</button>
+        </div>
     </div>
 </div>
 <script>
-       var isFinished = true;
+var isFinished = true;
 $(document).ready(() => {
     $("#file").change(() => {
-        $("#fileLabel").addClass("uploaded")
+        if ($("#file")[0].files.length !== 0) {
+            $("#fileLabel").addClass("uploaded")
+        }
+        else {
+            $("#fileLabel").removeClass("uploaded")
+        }
     });
 
-    $('#upload').on("click", () => {
+    $('#submit').on("click", () => {
         if ($("#file")[0].files[0] !== undefined) {
             if (isFinished) {
             alert("your video is being processed, please wait...");
@@ -165,8 +258,6 @@ $(document).ready(() => {
         }
     });
 });
-
-
 </script>
 </body>
 </html>

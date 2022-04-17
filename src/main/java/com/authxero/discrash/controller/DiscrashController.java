@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 public class DiscrashController {
 
     private final StorageService storageService;
@@ -86,6 +87,10 @@ public class DiscrashController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    @RequestMapping(value = "/endless", method = RequestMethod.GET)
+    public String getEndless() {
+        return "endless.html";
+    }
 
     @PostMapping("/process")
     @ResponseBody
