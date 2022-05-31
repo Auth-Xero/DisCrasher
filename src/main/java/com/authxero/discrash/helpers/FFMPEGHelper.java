@@ -1,18 +1,12 @@
 package com.authxero.discrash.helpers;
-
-import com.authxero.discrash.executor.CommandExecutorService;
-import com.authxero.discrash.executor.FireAndForgetExecutor;
 import com.authxero.discrash.storage.FileSystemStorageService;
 import java.util.concurrent.TimeUnit;
 
-public class FFMPEGHelper {
-    private static CommandExecutorService ces = null;
-    private static FireAndForgetExecutor ffe = null;
+public class FFMPEGHelper extends Helper{
     public static FFMPEGHelper instance =  null;
 
     public FFMPEGHelper() {
-        ces = new CommandExecutorService();
-        ffe = new FireAndForgetExecutor();
+        super();
         instance = this;
     }
 
@@ -22,10 +16,10 @@ public class FFMPEGHelper {
             String tempFileName = UtilHelper.generateFileName(32);
             String tempFileName2 = UtilHelper.generateFileName(32);
             Process proc = ces.fireAndReturnProcess("ffmpeg -i "+ FileSystemStorageService.rootLocation.resolve(fileNameInput)+" -pix_fmt yuv444p "+FileSystemStorageService.outputLocation.resolve(tempFileName+".webm").toAbsolutePath());
-            proc.waitFor(40, TimeUnit.SECONDS);
+            proc.waitFor(5, TimeUnit.MINUTES);
             UtilHelper.createFileAndWrite(tempFileName+".txt","file "+tempFileName+".webm\nfile black.webm");
             Process proc2 = ces.fireAndReturnProcess("ffmpeg -f concat -i "+FileSystemStorageService.outputLocation.resolve(tempFileName+".txt").toAbsolutePath().toString()+" -codec copy "+FileSystemStorageService.outputLocation.resolve(tempFileName2+".webm"));
-            proc2.waitFor(30, TimeUnit.SECONDS);
+            proc2.waitFor(5, TimeUnit.MINUTES);
             UtilHelper.deleteFile(tempFileName+".txt");
             UtilHelper.deleteFile(FileSystemStorageService.rootLocation.resolve(fileNameInput).toAbsolutePath().toString());
             UtilHelper.deleteFile(tempFileName+".webm");

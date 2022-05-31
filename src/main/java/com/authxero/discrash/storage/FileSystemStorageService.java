@@ -99,6 +99,9 @@ public class FileSystemStorageService implements StorageService {
             Resource resource = new ClassPathResource("black.webm");
             InputStream resourceInputStream = resource.getInputStream();
             Files.copy(resourceInputStream,outputLocation.resolve("black.webm"));
+            Resource resource2 = new ClassPathResource("1.mp4");
+            InputStream resourceInputStream2 = resource2.getInputStream();
+            Files.copy(resourceInputStream2,outputLocation.resolve("1.mp4"));
         } catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
         }

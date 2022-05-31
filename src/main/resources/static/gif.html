@@ -82,6 +82,22 @@ h2 {
     transition: all 0.25s;
 }
 
+#output {
+    background: white;
+    width: 400px;
+    padding: 1em;
+    margin: 2em;
+    display: inline-block;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    color: black;
+    font-size: 1em;
+    border: none;
+}
+
 #submit:hover {
     background: #00ad00;
 }
@@ -149,6 +165,7 @@ h2 {
     background-color: var(--wht);
 }
 
+
 .footer {
     display: flex;
     position: absolute;
@@ -195,16 +212,16 @@ h2 {
 </head>
 <body>
 <div class="topnav">
-    <a class="active" href="./">DisCrasher</a>
+    <a  href="./">DisCrasher</a>
     <a href="./endless">DisFinity</a>
-    <a href="./gif">DisGif</a>
+    <a class="active" href="./gif">DisGif</a>
     <a class="donate" href="https://paypal.me/AuthXero?country.x=US&locale.x=en_US">Donate</a>
     <a class="donate" href="https://github.com/Auth-Xero">Github</a>
     <a class="donate" href="https://discord.gg/XeqqgRaDMS">Discord</a>
 </div>
 <div id="center">
-    <h1>DisCrasher</h1>
-    <h2>Generate crash videos for Discord!</h2>
+    <h1>DisGif</h1>
+    <h2>Create crash GIFs (pronounced JIF, change my mind) for discord!</h2>
     <div id="container">
         <div id="formbox">
             <label for="file" id="fileLabel">Upload</label>
@@ -212,6 +229,7 @@ h2 {
             <button id="submit">Submit</button>
         </div>
     </div>
+    <input id="output" readonly>
 </div>
 <script>
 var isFinished = true;
@@ -233,7 +251,7 @@ $(document).ready(() => {
                 let data = new FormData();
                 data.append("file", $("#file")[0].files[0]);
                 $.ajax({
-                    url: '/process',
+                    url: '/process-gif',
                     cache: false,
                     contentType: false,
                     processData: false,
@@ -242,7 +260,8 @@ $(document).ready(() => {
                     enctype: "multipart/form-data",
                     success: res => {
                     isFinished = true;
-                    window.location = `/files/${res}`; },
+                     $("#output").val(res);
+                     },
                     error: (xhr, textStatus, errorThrown) => {
                         isFinished = true;
                         if(xhr.status == 418) alert(xhr.responseText);
