@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="title" content="DisCrasher">
-    <meta name="description" content="A utility designed to generate crash gifs for discord">
+    <meta name="description" content="A utility designed to generate fake virus videos for discord">
     <meta name="keywords" content="discord, crasher">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -88,22 +88,6 @@ h2 {
     transition: all 0.25s;
 }
 
-#output {
-    background: white;
-    width: 400px;
-    padding: 1em;
-    margin: 2em;
-    display: inline-block;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: space-between;
-    color: black;
-    font-size: 1em;
-    border: none;
-}
-
 #submit:hover {
     background: #00ad00;
 }
@@ -171,7 +155,6 @@ h2 {
     background-color: var(--wht);
 }
 
-
 .footer {
     display: flex;
     position: absolute;
@@ -218,18 +201,18 @@ h2 {
 </head>
 <body>
 <div class="topnav">
-    <a  href="./">DisCrasher</a>
+    <a href="./">DisCrasher</a>
     <a href="./endless">DisFinity</a>
-    <a class="active" href="./gif">DisGif</a>
-    <a href="./virus">DisVirus</a>
+    <a href="./gif">DisGif</a>
+    <a class="active" href="./virus">DisVirus</a>
     <a href="./size">DisSize</a>
     <a class="donate" href="https://paypal.me/AuthXero?country.x=US&locale.x=en_US">Donate</a>
     <a class="donate" href="https://github.com/Auth-Xero">Github</a>
     <a class="donate" href="https://discord.gg/XeqqgRaDMS">Discord</a>
 </div>
 <div id="center">
-    <h1>DisGif</h1>
-    <h2>Create crash GIFs (pronounced JIF, change my mind) for discord!</h2>
+    <h1>DisVirus</h1>
+    <h2>Create videos that trigger windows defender!</h2>
     <div id="container">
         <div id="formbox">
             <label for="file" id="fileLabel">Upload</label>
@@ -237,7 +220,6 @@ h2 {
             <button id="submit">Submit</button>
         </div>
     </div>
-    <input id="output" readonly>
 </div>
 <script>
 var isFinished = true;
@@ -259,7 +241,7 @@ $(document).ready(() => {
                 let data = new FormData();
                 data.append("file", $("#file")[0].files[0]);
                 $.ajax({
-                    url: '/process-gif',
+                    url: '/process-virus',
                     cache: false,
                     contentType: false,
                     processData: false,
@@ -268,8 +250,7 @@ $(document).ready(() => {
                     enctype: "multipart/form-data",
                     success: res => {
                     isFinished = true;
-                     $("#output").val(res);
-                     },
+                    window.location = `/files/${res}`; },
                     error: (xhr, textStatus, errorThrown) => {
                         isFinished = true;
                         if(xhr.status == 418) alert(xhr.responseText);

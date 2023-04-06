@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="title" content="DisCrasher">
-    <meta name="description" content="A utility designed to generate videos with endless/negative for discord">
+    <meta name="description" content="A utility designed to generate videos with wacky sizes for discord">
     <meta name="keywords" content="discord, crasher">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -55,16 +55,18 @@
 			}
 			#formbox {
 				background: white;
-				width: 500px;
+				width: 685px;
 				padding: 1em;
 				margin: 2em;
 				display: inline-block;
 				border-radius: 10px;
-				display: flex;
+				display: inline-block;
 				align-items: center;
 				justify-content: space-between;
 				color: black;
 				font-size: 1em;
+				text-align: center;
+				height: auto;
 			}
 			#submit {
 				outline: 0;
@@ -77,6 +79,12 @@
 				font-size: 1em;
 				cursor: pointer;
 				transition: all 0.25s;
+				display: inline-block;
+				overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid green
 			}
 
 			#submit:hover {
@@ -103,7 +111,7 @@
 
 			#fileLabel {
 			background-color: var(--drk);
-            display: flex;
+            display: inline-block;
 			border: 1px solid var(--discord);
 			border-radius: 5px;
 			overflow: hidden;
@@ -184,39 +192,62 @@
     background-color: var(--wht);
     color: var(--drk);
 }
+
+        #credits {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                background: white;
+				width: 400px;
+				padding: 1em;
+				display: inline-block;
+				border-radius: 0 10px 0 0;
+				color: black;
+				font-size: 1em;
+				text-align: center;
+        }
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="topnav">
     <a href="./">DisCrasher</a>
-    <a class="active" href="./endless">DisFinity</a>
+    <a href="./endless">DisFinity</a>
     <a href="./gif">DisGif</a>
     <a href="./virus">DisVirus</a>
-    <a href="./size">DisSize</a>
+    <a class="active" href="./size">DisSize</a>
     <a class="donate" href="https://paypal.me/AuthXero?country.x=US&locale.x=en_US">Donate</a>
     <a class="donate" href="https://github.com/Auth-Xero">Github</a>
     <a class="donate" href="https://discord.gg/XeqqgRaDMS">Discord</a>
 </div>
 <div id="center">
-    <h1>DisFinity</h1>
-    <h2>Create negative or endless videos for Discord!</h2>
+    <h1>DisSize</h1>
+    <h2>Create videos with wacky sizes!</h2>
     <div id="container">
         <div id="formbox">
             <div id="options">
-                <div class="option selected" id="op1" >Endless</div>
-                <div class="option" id="op2">Negative</div>
+                <div class="option selected" id="Bounce">Bounce</div>
+                <div class="option" id="Shutter">Shutter</div>
+                <div class="option" id="Sporadic">Sporadic</div>
+                <div class="option" id="Shrink">Shrink</div>
+                <div class="option" id="AudioBounce">AudioBounce</div>
+                <div class="option" id="AudioShutter">AudioShutter</div>
             </div>
+            <br>
             <label for="file" id="fileLabel">Upload</label>
             <input type="file" accept=".mp4" name="file" id="file" hidden required>
-            <button id="submit">Submit</button>
+            <label id="submit">Submit</label>
         </div>
     </div>
 </div>
+<div id="credits">
+    <h6>Made possible by <a href="https://github.com/OIRNOIR/WackyWebM">https://github.com/OIRNOIR/WackyWebM</a></h6>
+</div>
 <script>
-      var isFinished = true;
+var isFinished = true;
 $(document).ready(() => {
-    $("#file").on('change', function () {
+    $("#file").change(() => {
         if ($("#file")[0].files.length !== 0) {
             $("#fileLabel").addClass("uploaded")
         }
@@ -224,21 +255,26 @@ $(document).ready(() => {
             $("#fileLabel").removeClass("uploaded")
         }
     });
-    var selected = false
+    var selected = "Bounce";
     $(".option").click(function () {
-        $(this).attr("id") == "op1" ? selected = true : selected = false;
+        $(this).attr("id") == "Bounce" ? selected = "Bounce" : void(0);
+        $(this).attr("id") == "Shutter" ? selected = "Shutter ":void(0);
+        $(this).attr("id") == "Sporadic" ? selected = "Sporadic" : void(0);
+        $(this).attr("id") == "Shrink" ? selected = "Shrink" : void(0);
+        $(this).attr("id") == "AudioBounce" ? selected = "AudioBounce" : void(0);
+        $(this).attr("id") == "AudioShutter" ? selected = "AudioShutter" : void(0);
         $(this).addClass("selected")
         $(this).siblings(".option").removeClass("selected")
     })
-    $("#submit").click(function () {
+    $('#submit').on("click", () => {
         if ($("#file")[0].files[0] !== undefined) {
             if (isFinished) {
-                alert("your video is being processed, please wait...");
+            alert("your video is being processed, please wait...");
                 isFinished = false;
                 let data = new FormData();
                 data.append("file", $("#file")[0].files[0]);
                 $.ajax({
-                    url: '/process-endless?endless=' + selected,
+                    url: '/process-size?type=' + selected.toLowerCase(),
                     cache: false,
                     contentType: false,
                     processData: false,
@@ -246,13 +282,12 @@ $(document).ready(() => {
                     data: data,
                     enctype: "multipart/form-data",
                     success: res => {
-                        isFinished = true;
-                        window.location = `/files/${res}`;
-                    },
+                    isFinished = true;
+                    window.location = `/files/${res}`; },
                     error: (xhr, textStatus, errorThrown) => {
                         isFinished = true;
-                        if (xhr.status == 418) alert(xhr.responseText);
-                        else if (xhr.status == 400) alert("Please only upload .mp4 files!");
+                        if(xhr.status == 418) alert(xhr.responseText);
+                        else if(xhr.status == 400) alert("Please only upload .mp4 files!");
                         else alert('An unknown error occurred! Please only upload files less than 8mb!');
                     }
                 });
@@ -264,8 +299,9 @@ $(document).ready(() => {
         else {
             alert("Please select a file first!");
         }
-    })
-})
+    });
+});
+
 
 </script>
 </body>

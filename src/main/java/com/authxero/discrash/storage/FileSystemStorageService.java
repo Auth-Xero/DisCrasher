@@ -22,11 +22,13 @@ import java.util.stream.Stream;
 public class FileSystemStorageService implements StorageService {
 
     public static Path rootLocation = null;
-    public static Path outputLocation= null;
+    public static Path outputLocation = null;
+    public static Path wwmLocation = null;
     @Autowired
     public FileSystemStorageService(StorageProperties properties) {
         rootLocation = Paths.get(properties.getLocation());
         outputLocation = Paths.get(properties.getOutputDir());
+        wwmLocation = Paths.get(properties.getWwmDir());
     }
 
     @Override
@@ -60,7 +62,6 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             throw new StorageException("Failed to read all files", e);
         }
-
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.authxero.discrash.helpers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -17,7 +14,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class GfycatHelper {
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final RestTemplate restTemplate = new RestTemplate();
 
     public static String uploadVideo(Path fileInput) {
@@ -28,9 +24,8 @@ public class GfycatHelper {
             headers1.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>("{ \"title\": \"" + fileInput.getFileName() + "\" }", headers1);
             ResponseEntity<String> response1 = restTemplate.postForEntity("https://api.gfycat.com/v1/gfycats", request, String.class);
-            JsonNode jn = mapper.readTree(response1.getBody());
+            JsonNode jn = JSONHelper.mapper.readTree(response1.getBody());
             String name = jn.get("gfyname").asText();
-            //System.out.println(name);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -39,7 +34,6 @@ public class GfycatHelper {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             String serverUrl = "https://filedrop.gfycat.com/";
             ResponseEntity<String> response = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
-            //System.out.print(response);
             return response.getStatusCode() == HttpStatus.NO_CONTENT ? getGfyUrl(name) : "Failed to upload to gfycat!";
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,14 +44,14 @@ public class GfycatHelper {
     private static String getGfyUrl(String key) throws Exception {
         TimeUnit.SECONDS.sleep(8);
         ResponseEntity<String> response = restTemplate.getForEntity("https://api.gfycat.com/v1/gfycats/fetch/status/"+key,String.class);
-        JsonNode jn = mapper.readTree(response.getBody());
+        JsonNode jn = JSONHelper.mapper.readTree(response.getBody());
         JsonNode name = jn.get("gfyname");
         int attempts = 0;
         while (Objects.isNull(name)){
             attempts++;
             TimeUnit.SECONDS.sleep(6);
             ResponseEntity<String> responseLoop = restTemplate.getForEntity("https://api.gfycat.com/v1/gfycats/fetch/status/"+key,String.class);
-            JsonNode jnLoop = mapper.readTree(responseLoop.getBody());
+            JsonNode jnLoop = JSONHelper.mapper.readTree(responseLoop.getBody());
             name = jnLoop.get("gfyname");
             if(attempts > 5){
                 throw new Exception("Failed to get gif name from Gfycat!");

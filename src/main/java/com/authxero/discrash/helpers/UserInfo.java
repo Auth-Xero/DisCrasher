@@ -1,7 +1,5 @@
 package com.authxero.discrash.helpers;
 
-import java.math.BigInteger;
-
 public class UserInfo {
 
     private String ipAddr;

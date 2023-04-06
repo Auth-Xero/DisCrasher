@@ -2,6 +2,7 @@ package com.authxero.discrash.controller;
 
 import com.authxero.discrash.executor.CommandExecutorService;
 import com.authxero.discrash.helpers.*;
+import com.authxero.discrash.helpers.DisSizeHelper;
 import com.authxero.discrash.storage.StorageFileNotFoundException;
 import com.authxero.discrash.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,9 @@ public class DiscrashController {
     private FFMPEGHelper ffmpegHelper;
     private EndlessVideoHelper endlessVideoHelper;
     private GifHelper gifHelper;
+    private VirusHelper virusHelper;
+    private DisSizeHelper sizeHelper;
+
     public static int[][] MP4_HEADERS = new int[][]{
             {0x66, 0x74, 0x79, 0x70},
             {0x6d, 0x64, 0x61, 0x74},
@@ -54,12 +59,22 @@ public class DiscrashController {
             {0x50, 0x49, 0x43, 0x54},
     };
 
+    public static List<String> RESIZE_TYPES = new ArrayList<String>();
+
     @Autowired
     public DiscrashController(StorageService storageService) {
+        RESIZE_TYPES.add("bounce");
+        RESIZE_TYPES.add("shutter");
+        RESIZE_TYPES.add("sporadic");
+        RESIZE_TYPES.add("shrink");
+        RESIZE_TYPES.add("audiobounce");
+        RESIZE_TYPES.add("audioshutter");
         this.storageService = storageService;
         this.ffmpegHelper = new FFMPEGHelper();
         this.endlessVideoHelper = new EndlessVideoHelper();
         this.gifHelper = new GifHelper();
+        this.virusHelper = new VirusHelper();
+        this.sizeHelper = new DisSizeHelper();
     }
 
     //DO NOT TURN ON THE 'debug' FLAG UNLESS YOU WANT FILE LISTING
@@ -93,6 +108,16 @@ public class DiscrashController {
     @RequestMapping(value = "/gif", method = RequestMethod.GET)
     public String getGif() {
         return "gif.html";
+    }
+
+    @RequestMapping(value = "/virus", method = RequestMethod.GET)
+    public String getVirus() {
+        return "virus.html";
+    }
+
+    @RequestMapping(value = "/size", method = RequestMethod.GET)
+    public String getSize() {
+        return "size.html";
     }
 
     @PostMapping("/process")
@@ -140,6 +165,57 @@ public class DiscrashController {
         }
 
     }
+
+    @PostMapping("/process-virus")
+    @ResponseBody
+    public ResponseEntity<String> handleVirusUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        try {
+            if (RateLimitHelper.isBeingRateLimited(request.getRemoteAddr()))
+                return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("You cannot brew coffee in a teapot, you have to wait!");
+            if (file.getOriginalFilename().endsWith(".mp4")) {
+                if (UtilHelper.verifyFileHeader(file, MP4_HEADERS)) {
+                    String fileName = storageService.putFile(file, true);
+                    String outputFile = this.virusHelper.generateCrashVideo(fileName);
+                    return ResponseEntity.ok().body(outputFile);
+                } else {
+                    return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+            }
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body("An unknown error occurred!");
+        }
+    }
+
+    @PostMapping("/process-size")
+    @ResponseBody
+    public ResponseEntity<String> handleResize(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        try {
+            if (RateLimitHelper.isBeingRateLimited(request.getRemoteAddr()))
+                return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("You cannot brew coffee in a teapot, you have to wait!");
+            if (request.getParameter("type") == null)
+                return ResponseEntity.badRequest().body("Please do not leave any of the parameters blank!");
+            if (file.getOriginalFilename().endsWith(".mp4")) {
+                if (!RESIZE_TYPES.contains(request.getParameter("type").toLowerCase()))
+                    return ResponseEntity.badRequest().body("Select a valid type!");
+                if (UtilHelper.verifyFileHeader(file, MP4_HEADERS)) {
+                    String t = request.getParameter("type").toLowerCase();
+                    String fileName = storageService.putFile(file, true);
+                    String outputFile = this.sizeHelper.generateVideo(fileName, t);
+                    return ResponseEntity.ok().body(outputFile);
+                } else {
+                    return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Please only upload mp4 files!");
+            }
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+
+    }
+
     @PostMapping("/process-endless")
     @ResponseBody
     public ResponseEntity<String> handleEndlessUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
